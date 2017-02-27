@@ -14,51 +14,41 @@ import javafx.stage.Stage;
 public class PasswordGenerator extends Application {
     MenuBar menuBar;
     GridPane root;
+    GridPane contentArea;
+    Stage stage;
 
     @Override
     public void start(Stage stage) {
-        initUI(stage);
+        this.stage = stage;
+        initUI();
     }
 
-    private void initUI(Stage stage) {
+    private void initUI() {
         root = new GridPane();
-        root.setVgap(10);
-        root.setHgap(5);
-        root.setPadding(new Insets(10));
+        root.setHgap(10);
+        root.setVgap(20);
 
-//        createMenus(stage);
-//        root.getChildren().add(menuBar);
-
-        // Column constraints
-        ColumnConstraints cons1 = new ColumnConstraints();
-        cons1.setHgrow(Priority.NEVER);
-        root.getColumnConstraints().add(cons1);
-
-        ColumnConstraints cons2 = new ColumnConstraints();
-        cons2.setHgrow(Priority.ALWAYS);
-
-        root.getColumnConstraints().addAll(cons1, cons2);
-
-        // Row constraints
-        RowConstraints rcons1 = new RowConstraints();
-        rcons1.setVgrow(Priority.NEVER);
-
-        RowConstraints rcons2  = new RowConstraints();
-        rcons2.setVgrow(Priority.ALWAYS);
-
-        root.getRowConstraints().addAll(rcons1, rcons2);
-
+        generateCols();
+        createMenus();
         addBoxes();
 
-        Scene scene = new Scene(root, 600, 350);
 
+        Scene scene = new Scene(root, 600, 350);
         stage.setTitle("Password Generator");
         stage.setScene(scene);
-
         stage.show();
     }
 
-    private void createMenus(Stage stage) {
+    private void generateCols() {
+        ColumnConstraints col14 = new ColumnConstraints();
+        col14.setPercentWidth(20);
+        ColumnConstraints col23 = new ColumnConstraints();
+        col23.setPercentWidth(30);
+
+        root.getColumnConstraints().addAll(col14, col23, col23, col14);
+    }
+
+    private void createMenus() {
         menuBar = new MenuBar();
         menuBar.prefWidthProperty().bind(stage.widthProperty());
 
@@ -67,7 +57,7 @@ public class PasswordGenerator extends Application {
         Menu helpMenu = new Menu("_Help");
 
         // Menu items
-        MenuItem exitMi = new MenuItem("_Exit");
+        MenuItem exitMi = new MenuItem("Exit");
         MenuItem aboutMi = new MenuItem("About");
         MenuItem helpMi = new MenuItem("Help");
 
@@ -89,6 +79,8 @@ public class PasswordGenerator extends Application {
 
         // Add menus to menu bar
         menuBar.getMenus().addAll(fileMenu, helpMenu);
+
+        root.add(menuBar, 0,0,4,1);
     }
 
     private void createAboutModal() {
@@ -135,17 +127,36 @@ public class PasswordGenerator extends Application {
     }
 
     private void addBoxes() {
-        Label lblSeed = new Label("Seed:");
-        Label lblOffset = new Label("Offset:");
+        // Create input labels
+        Label lblSeed = new Label("_Seed:");
+        Label lblOffset = new Label("_Offset:");
 
+        // Create input TextFields
         TextField fieldSeed = new TextField();
         TextField fieldOffset = new TextField();
 
-        root.add(lblSeed, 0,1);
+        // Set mnemonics
+        lblSeed.setLabelFor(fieldSeed);
+        lblSeed.setMnemonicParsing(true);
+        lblOffset.setLabelFor(fieldOffset);
+        lblOffset.setMnemonicParsing(true);
+
+        // Add each row
+        root.add(lblSeed, 0,1,1,1);
         root.add(fieldSeed, 1,1,3,1);
 
-        root.add(lblOffset, 0,2);
+        root.add(lblOffset, 0,2,3,1);
         root.add(fieldOffset, 1,2,3,1);
+
+        // Create button and ouptut TextField
+        Button btn = new Button("Generate");
+        TextField output = new TextField();
+        btn.setOnAction((ActionEvent event) -> {
+            output.setText(new Generator().go());
+        });
+
+        root.add(btn, 0,4,1,1);
+        root.add(output,0,5,4,1);
     }
 
     public static void main(String[] args) {
