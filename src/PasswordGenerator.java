@@ -4,7 +4,9 @@ import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.*;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
@@ -149,14 +151,17 @@ public class PasswordGenerator extends Application {
         root.add(fieldOffset, 1,2,3,1);
 
         // Create button and ouptut TextField
-        Button btn = new Button("Generate");
+        Button btn = new Button("_Generate");
         TextField output = new TextField();
         btn.setOnAction((ActionEvent event) -> {
-            output.setText(new Generator().go());
+            String seedString = fieldSeed.getText();
+            String offsetString = fieldOffset.getText();
+            output.setText(new Generator(seedString, offsetString).create());
         });
 
         root.add(btn, 0,4,1,1);
         root.add(output,0,5,4,1);
+
     }
 
     public static void main(String[] args) {
